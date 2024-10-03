@@ -8,12 +8,10 @@
 #define RED "\033[1;31m"
 #define BLUE "\033[1;34m"
 #define CYAN "\033[1;36m"
-#define MAGENTA "\033[1;35m"
 #define RESET "\033[0m"
 
 #define resMax 100
 
-//declarer la structure avec le nom Reservation
 struct Reservation {
     int id;
     char nom[30];
@@ -24,36 +22,53 @@ struct Reservation {
     char date[11];
 };
 
-//le tableau de la structure avce le nom resTable avec la taille defini en haut du code
 struct Reservation resTable[resMax];
-int cpt = 0; // compteur des element du tableu
-int idCounter = 1; //compteur de l'id
+int cpt = 0;
+int idCounter = 1;
 
-const char* disponibleStatu[] = {"valide", "annulée", "traitée", "reportée"}; //LES status disponibles
-const int nombre_statuts = sizeof(disponibleStatu) / sizeof(disponibleStatu[0]); //nombre des status disponible
+const char* disponibleStatu[] = {"valide", "annulée", "traitée", "reportée"};
+const int nombre_statuts = sizeof(disponibleStatu) / sizeof(disponibleStatu[0]);
 
-//checker la date
+int chaeckDate(const char *date);
+int checkInt();
+int valideTele(const char* phone);
+int checkUniquePhone(const char* phone);
+void ajouter_reservation(char* nom, char* prenom, char* telephone, int age, char* statut, char* date);
+void afficher_resTable();
+struct Reservation* rechercher_par_reference(int id);
+void modifier_reservation(int id);
+void supprimer_reservation(int id);
+void afficher_statistiques(int choix);
+void insertion_defaut();
+void afficher_details_reservation(int id);
+
+void trier_reservations_par_nom(int ordre);
+void trier_reservations_par_statut(int ordre);
+void trier_reservations_par_date(int ordre);
+void trier_reservations();
+
+// Vérifie la validité de la date
 int chaeckDate(const char *date) {
     int a, m, j;
     if (sscanf(date, "%d-%d-%d", &a, &m, &j) != 3) return 0;
     if (m < 1 || m > 12) return 0;
     if (j < 1 || j > 31) return 0;
 
-  if (m == 2) {
-    if (j > 28) return 0;
-
+    if (m == 2) {
+        if (j > 28) return 0;
     } else if (m == 4 || m == 6 || m == 9 || m == 11) {
         if (j > 30) return 0;
     }
     return 1;
 }
 
+// Vérifie si l'entrée est un entier positif
 int checkInt() {
     int var;
     while (1) {
-        if (scanf("%d", &var) != 1 || var < 0) { // valider si scanf est true=1 (l'entrer est entier)
+        if (scanf("%d", &var) != 1 || var < 0) {
             printf(RED "Entrée invalide. Veuillez entrer un entier positif: " RESET);
-            while (getchar() != '\n'); // vider le tampon
+            while (getchar() != '\n');
         } else {
             while (getchar() != '\n');
             return var;
@@ -61,28 +76,30 @@ int checkInt() {
     }
 }
 
+// Vérifie la validité du numéro de téléphone
 int valideTele(const char* phone) {
     if (strlen(phone) != 10) return 0;
     for (int i = 0; i < 10; i++) {
-        if (!isdigit(phone[i])) return 0; // checker si vraiment le numero de tele est chiffre d'apres la fonction isdigit du biblio <ctype.h>
-
+        if (!isdigit(phone[i])) return 0;
     }
     return 1;
 }
 
+// Vérifie si le numéro de téléphone est unique
 int checkUniquePhone(const char* phone) {
     for (int i = 0; i < cpt; i++) {
         if (strcmp(resTable[i].telephone, phone) == 0) {
-            return 0; //mum de telephon deja existe
+            return 0; // Numéro de téléphone déjà utilisé
         }
     }
-    return 1; // num de tele unique
+    return 1; // Numéro de téléphone unique
 }
 
+// Ajoute une nouvelle réservation
 void ajouter_reservation(char* nom, char* prenom, char* telephone, int age, char* statut, char* date) {
     if (!checkUniquePhone(telephone)) {
         printf(RED "Le numéro de téléphone %s est déjà utilisé.\n" RESET, telephone);
-        return; // Sortir en cas de numero deja existe
+        return; // Sortir en cas de numéro déjà existant
     }
 
     if (cpt < resMax) {
@@ -99,9 +116,10 @@ void ajouter_reservation(char* nom, char* prenom, char* telephone, int age, char
     }
 }
 
+// Affiche le tableau des réservations
 void afficher_resTable() {
     if (cpt == 0) {
-        printf(RED "Pas de reservation pour ce moment.\n" RESET);
+        printf(RED "Pas de réservation pour ce moment.\n" RESET);
         return;
     }
     printf(CYAN "+----+----------------+----------------+---------------+-----+------------+------------+\n" RESET);
@@ -116,16 +134,17 @@ void afficher_resTable() {
     printf(CYAN "+----+----------------+----------------+---------------+-----+------------+------------+\n" RESET);
 }
 
+// Recherche une réservation par ID
 struct Reservation* rechercher_par_reference(int id) {
     for (int i = 0; i < cpt; i++) {
         if (resTable[i].id == id) {
-            return &resTable[i];  // Renvoie l'adresse de la structure
+            return &resTable[i];
         }
     }
-    return NULL;  // Retourne NULL si aucune réservation n'est trouvée
+    return NULL; // Retourne NULL si aucune réservation n'est trouvée
 }
 
-
+// Modifie une réservation existante
 void modifier_reservation(int id) {
     struct Reservation* res = rechercher_par_reference(id);
     if (res) {
@@ -173,6 +192,7 @@ void modifier_reservation(int id) {
     }
 }
 
+// Supprime une réservation par ID
 void supprimer_reservation(int id) {
     for (int i = 0; i < cpt; i++) {
         if (resTable[i].id == id) {
@@ -187,6 +207,7 @@ void supprimer_reservation(int id) {
     printf(RED "Réservation non trouvée.\n" RESET);
 }
 
+// Affiche les statistiques des réservations
 void afficher_statistiques(int choix) {
     int total_age = 0;
     int age_cpt[3] = {0}; // 0-18, 19-35, 36+
@@ -227,19 +248,21 @@ void afficher_statistiques(int choix) {
     }
 }
 
+// Insère des réservations par défaut
 void insertion_defaut() {
-    ajouter_reservation("Hamdi", "Salma", "0612345678", 19, "valide", "2024-10-01");
+    ajouter_reservation("Hamdi", "Salma", "0612345678", 19, "valide", "2024-01-01");
     ajouter_reservation("Bennani", "Youssef", "0687654321", 30, "annulée", "2024-10-02");
-    ajouter_reservation("Benjelloun", "Salma", "0678901234", 40, "traitée", "2024-10-03");
+    ajouter_reservation("Benjelloun", "Salma", "0678901234", 40, "traitée", "2024-07-03");
     ajouter_reservation("Mouhib", "Rachid", "0667890123", 50, "reportée", "2024-10-04");
     ajouter_reservation("Zouiten", "Nadia", "0656789012", 15, "valide", "2024-10-05");
-    ajouter_reservation("El Ouardi", "Hamid", "0645678901", 20, "annulée", "2024-10-06");
+    ajouter_reservation("El Ouardi", "Hamid", "0645678901", 20, "annulée", "2024-10-13");
     ajouter_reservation("Cherkaoui", "Meryem", "0634567890", 22, "traitée", "2024-10-07");
     ajouter_reservation("Fassi", "Omar", "0623456789", 35, "reportée", "2024-10-08");
-    ajouter_reservation("Ait Benhaddou", "Khadija", "0612340987", 28, "valide", "2024-10-09");
-    ajouter_reservation("Brahimi", "Zineb", "0687654312", 33, "annulée", "2024-10-10");
+    ajouter_reservation("Ait Benhaddou", "Khadija", "0612340987", 28, "valide", "2024-12-09");
+    ajouter_reservation("Brahimi", "Zineb", "0687654312", 33, "annulée", "2024-02-10");
 }
 
+// Affiche les détails d'une réservation
 void afficher_details_reservation(int id) {
     struct Reservation* res = rechercher_par_reference(id);
     if (res) {
@@ -256,6 +279,102 @@ void afficher_details_reservation(int id) {
     }
 }
 
+// Trie les réservations par nom
+void trier_reservations_par_nom(int ordre) {
+    for (int i = 0; i < cpt - 1; i++) {
+        for (int j = 0; j < cpt - i - 1; j++) {
+            int comparison = strcmp(resTable[j].nom, resTable[j + 1].nom);
+            if ((ordre == 1 && comparison > 0) || (ordre == 2 && comparison < 0)) {
+                struct Reservation temp = resTable[j];
+                resTable[j] = resTable[j + 1];
+                resTable[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Trie les réservations par statut
+void trier_reservations_par_statut(int ordre) {
+    for (int i = 0; i < cpt - 1; i++) {
+        for (int j = 0; j < cpt - i - 1; j++) {
+            int comparison = strcmp(resTable[j].statut, resTable[j + 1].statut);
+            if ((ordre == 1 && comparison > 0) || (ordre == 2 && comparison < 0)) {
+                struct Reservation temp = resTable[j];
+                resTable[j] = resTable[j + 1];
+                resTable[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Trie les réservations par date
+void trier_reservations_par_date(int ordre) {
+    for (int i = 0; i < cpt - 1; i++) {
+        for (int j = 0; j < cpt - i - 1; j++) {
+            int comparison = strcmp(resTable[j].date, resTable[j + 1].date);
+            if ((ordre == 1 && comparison > 0) || (ordre == 2 && comparison < 0)) {
+                struct Reservation temp = resTable[j];
+                resTable[j] = resTable[j + 1];
+                resTable[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void rechercher_par_id() {
+    int id;
+    printf(GREEN "Entrer la référence unique (ID) à rechercher: " RESET);
+    id = checkInt();
+    struct Reservation* res = rechercher_par_reference(id);
+    if (res) {
+        afficher_details_reservation(res->id);
+    } else {
+        printf(RED "Réservation non trouvée.\n" RESET);
+    }
+}
+
+void rechercher_par_nom() {
+    char nom[30];
+    printf(GREEN "Entrer le nom à rechercher: " RESET);
+    scanf(" %[^\n]%*c", nom);
+
+    int found = 0;
+    for (int i = 0; i < cpt; i++) {
+        if (strcmp(resTable[i].nom, nom) == 0) {
+            afficher_details_reservation(resTable[i].id);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf(RED "Aucune réservation trouvée pour le nom %s.\n" RESET, nom);
+    }
+}
+
+void rechercher_par_date() {
+    char date[11];
+    printf(GREEN "Entrer la date à rechercher (YYYY-MM-DD): " RESET);
+    while (1) {
+        scanf(" %10s", date);
+        if (chaeckDate(date)) {
+            break;
+        } else {
+            printf(RED "Date invalide. Veuillez entrer une date valide (YYYY-MM-DD): " RESET);
+        }
+    }
+
+    int found = 0;
+    for (int i = 0; i < cpt; i++) {
+        if (strcmp(resTable[i].date, date) == 0) {
+            afficher_details_reservation(resTable[i].id);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf(RED "Aucune réservation trouvée pour la date %s.\n" RESET, date);
+    }
+}
+
+// Fonction principale
 int main() {
     insertion_defaut();
     printf(GREEN "Déjà %d réservations stockées.\n" RESET, cpt);
@@ -269,7 +388,9 @@ int main() {
         printf(YELLOW "4. Afficher les réservations\n" RESET);
         printf(YELLOW "5. Consulter les détails d'une réservation\n" RESET);
         printf(YELLOW "6. Statistiques\n" RESET);
-        printf(YELLOW "7. Quitter\n" RESET);
+        printf(YELLOW "7. Trier les réservations\n" RESET);
+        printf(YELLOW "9. Rechercher une réservation\n" RESET);
+        printf(YELLOW "8. Quitter\n" RESET);
         printf(BLUE "==============================================\n" RESET);
         printf("Choisissez une option: ");
         choix = checkInt();
@@ -346,12 +467,69 @@ int main() {
                 afficher_statistiques(choix_statistique);
                 break;
             }
-            case 7:
+
+            case 7: {
+                printf(GREEN "Choisissez un critère de tri:\n" RESET);
+                printf("1. Par nom\n");
+                printf("2. Par statut\n");
+                printf("3. Par date\n");
+                int critere = checkInt();
+
+                printf(GREEN "Choisissez un ordre de tri:\n" RESET);
+                printf("1. Croissante\n");
+                printf("2. Decroissante\n");
+                int ordre = checkInt();
+
+                switch (critere) {
+                    case 1:
+                        trier_reservations_par_nom(ordre);
+                        printf(GREEN "Réservations triées par nom.\n" RESET);
+                        break;
+                    case 2:
+                        trier_reservations_par_statut(ordre);
+                        printf(GREEN "Réservations triées par statut.\n" RESET);
+                        break;
+                    case 3:
+                        trier_reservations_par_date(ordre);
+                        printf(GREEN "Réservations triées par date.\n" RESET);
+                        break;
+                    default:
+                        printf(RED "Critère de tri invalide.\n" RESET);
+                }
+                break;
+            }
+
+            case 9: {
+    printf(GREEN "Choisissez le type de recherche:\n" RESET);
+    printf("1. Par ID\n");
+    printf("2. Par nom\n");
+    printf("3. Par date (optionnelle)\n");
+    int choix_recherche = checkInt();
+
+    switch (choix_recherche) {
+        case 1:
+            rechercher_par_id();
+            break;
+        case 2:
+            rechercher_par_nom();
+            break;
+        case 3:
+            rechercher_par_date();
+            break;
+        default:
+            printf(RED "Choix de recherche invalide.\n" RESET);
+    }
+    break;
+}
+
+            case 8:
                 printf(GREEN "Au revoir!\n" RESET);
                 break;
+
             default:
-                printf(RED "Option invalide.\n" RESET);
+                printf(RED "Choix invalide.\n" RESET);
         }
-    } while (choix != 7);
+    } while (choix != 8);
+
     return 0;
 }
