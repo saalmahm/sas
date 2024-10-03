@@ -389,8 +389,8 @@ int main() {
         printf(YELLOW "5. Consulter les détails d'une réservation\n" RESET);
         printf(YELLOW "6. Statistiques\n" RESET);
         printf(YELLOW "7. Trier les réservations\n" RESET);
-        printf(YELLOW "9. Rechercher une réservation\n" RESET);
-        printf(YELLOW "8. Quitter\n" RESET);
+        printf(YELLOW "8. Rechercher une réservation\n" RESET);
+        printf(YELLOW "9. Quitter\n" RESET);
         printf(BLUE "==============================================\n" RESET);
         printf("Choisissez une option: ");
         choix = checkInt();
@@ -499,7 +499,7 @@ int main() {
                 break;
             }
 
-            case 9: {
+            case 8: {
     printf(GREEN "Choisissez le type de recherche:\n" RESET);
     printf("1. Par ID\n");
     printf("2. Par nom\n");
@@ -522,7 +522,7 @@ int main() {
     break;
 }
 
-            case 8:
+            case 9:
                 printf(GREEN "Au revoir!\n" RESET);
                 break;
 
