@@ -239,7 +239,7 @@ void afficher_statistiques(int choix) {
 
 
 void insertion_defaut() {
-    ajouter_reservation("wkili", "amira", "0617815445", 20, "validé", "2024-10-01");
+    ajouter_reservation("salma", "hamdi", "0617815445", 20, "validé", "2024-10-01");
     ajouter_reservation("allaoui", "khalid", "0623547890", 50, "annulé", "2024-10-02");
     ajouter_reservation("magha", "rikia", "0634567890", 25, "traité", "2024-10-03");
     ajouter_reservation("montadir", "hiba", "0667092378", 40, "reporté", "2024-10-04");
@@ -249,9 +249,6 @@ void insertion_defaut() {
     ajouter_reservation("alhafidi", "kenza", "0667992038", 40, "reporté", "2024-10-08");
     ajouter_reservation("El mouradi", "salima", "0714121617", 25, "validé", "2024-10-09");
     ajouter_reservation("ait hamou", "nouhaila", "0678999125", 32, "annulé", "2024-10-10");
-     ajouter_reservation("lahlou", "anas", "0677788899",20, "reporté", "2024-10-11");
-      ajouter_reservation("basri", "taha", "0611122233", 25, "validé", "2024-10-12");
-       ajouter_reservation("barada", "ali", "0611009913", 54, "annulé", "2024-10-13");
 
 }
 
